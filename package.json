@@ -1,0 +1,13 @@
+{
+  "name": "nox-landing-page",
+  "version": "1.0.0",
+  "description": "NOX Brand Landing Page",
+  "scripts": {
+    "start": "live-server ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

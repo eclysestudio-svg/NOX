@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOX | Premium Underground Focus</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;700&family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', 'sans-serif'],
+                        display: ['"Cinzel"', 'serif'],
+                        gothic: ['"Cinzel Decorative"', 'serif'],
+                    },
+                    colors: {
+                        peach: {
+                            500: '#ff7733',
+                            600: '#e66525',
+                        },
+                        blood: {
+                            500: '#8B0000',
+                            400: '#AA0000',
+                            300: '#CC1111',
+                        },
+                        ui: {
+                            0: '#000000',
+                            1: '#0A0A0A',
+                            2: '#111113',
+                            border: 'rgba(255,255,255,0.06)',
+                            text: '#A1A1AA', // zinc-400
+                            mutetext: '#52525B', // zinc-600
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* ─── Hide default cursor sitewide ─── */
+        *, *::before, *::after { cursor: none !important; }
+
+        body {
+            background-color: #000000;
+            color: #A1A1AA;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ─── Custom Skull Cursor ─── */
+        #skull-cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 38px; height: 38px;
+            pointer-events: none;
+            z-index: 99999;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+            filter: drop-shadow(0 0 6px rgba(139,0,0,0.9));
+            transition: filter 0.2s ease;
+        }
+        #skull-cursor.hovering {
+            filter: drop-shadow(0 0 14px rgba(200,0,0,1)) drop-shadow(0 0 30px rgba(139,0,0,0.6));
+        }
+        #skull-cursor-trail {
+            position: fixed;
+            top: 0; left: 0;
+            width: 22px; height: 22px;
+            pointer-events: none;
+            z-index: 99998;
+            transform: translate(-50%, -50%);
+            will-change: transform;
+            opacity: 0.35;
+            filter: drop-shadow(0 0 4px rgba(139,0,0,0.5));
+        }
+
+        /* ─── Gothic pulse glow overlays ─── */
+        .gothic-glow::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(100,0,0,0.18) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .blood-glow {
+            animation: bloodPulse 4s ease-in-out infinite;
+        }
+        @keyframes bloodPulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(139,0,0,0.15), inset 0 0 40px rgba(100,0,0,0.05); }
+            50%       { box-shadow: 0 0 60px rgba(139,0,0,0.35), inset 0 0 60px rgba(100,0,0,0.12); }
+        }
+
+        /* ─── Glitch on hero title ─── */
+        .glitch {
+            position: relative;
+        }
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            inset: 0;
+            background: transparent;
+            clip-path: polygon(0 0, 100% 0, 100% 120%, 0% 120%);
+            -webkit-text-stroke: 1px rgba(255,255,255,0.85);
+            color: transparent;
+        }
+        .glitch::before {
+            animation: glitch-top 3.5s infinite steps(1);
+            color: rgba(139,0,0,0.7);
+            -webkit-text-stroke: 0px;
+        }
+        .glitch::after {
+            animation: glitch-bot 4s infinite steps(1);
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(139,0,0,0.5);
+        }
+        @keyframes glitch-top {
+            0%,85%,100% { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+            86%          { clip-path: inset(8% 0 80% 0);  transform: translateX(-3px); }
+            88%          { clip-path: inset(20% 0 60% 0); transform: translateX(3px); }
+            90%          { clip-path: inset(50% 0 30% 0); transform: translateX(-2px); }
+            92%          { clip-path: inset(0 0 100% 0);  transform: translateX(0); }
+        }
+        @keyframes glitch-bot {
+            0%,80%,100% { clip-path: inset(100% 0 0 0); transform: skewX(0deg); }
+            81%         { clip-path: inset(70% 0 5% 0);  transform: skewX(-2deg) translateX(4px); }
+            83%         { clip-path: inset(40% 0 40% 0); transform: skewX(1deg) translateX(-3px); }
+            85%         { clip-path: inset(100% 0 0 0);  transform: skewX(0deg); }
+        }
+
+        /* ─── Orbiting sigil ring in hero ─── */
+        #sigil-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 600px; height: 600px;
+            margin: -300px 0 0 -300px;
+            pointer-events: none;
+            animation: rotateSigil 30s linear infinite;
+            opacity: 0.06;
+        }
+        @keyframes rotateSigil {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        /* ─── Drip SVG divider ─── */
+        .drip-divider {
+            display: block;
+            width: 100%;
+            overflow: visible;
+            line-height: 0;
+        }
+        .drip-divider svg {
+            display: block;
+            width: 100%;
+        }
+
+        /* Essential GSAP base hidden states */
+        .char {
+            transform: translateY(110%);
+            opacity: 0;
+            display: inline-block;
+        }
+
+        /* Revealer classes */
+        .img-reveal {
+            clip-path: inset(100% 0 0 0);
+        }
+
+        /* Magnetic Button Wrap */
+        .magnetic-wrap {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 40px; 
+            z-index: 50;
+        }
+        
+        .btn-magnetic {
+            position: relative;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, box-shadow;
+        }
+        
+        /* Noise texture background */
+        .noise-bg::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: overlay;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #3A0000; border-radius: 4px; border: 2px solid #000; }
+        ::-webkit-scrollbar-thumb:hover { background: #6A0000; }
+        
+        ::selection { background: #8B0000; color: #fff; }
+
+        /* ─── Gothic section label ─── */
+        .gothic-label {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.3em;
+            color: rgba(139,0,0,0.8);
+        }
+
+        /* ─── Red border glow on video cards ─── */
+        .gothic-card {
+            border-color: rgba(100,0,0,0.4) !important;
+            box-shadow: 0 0 0 1px rgba(139,0,0,0.1), 0 20px 50px rgba(0,0,0,0.6);
+            transition: box-shadow 0.6s ease;
+        }
+        .gothic-card:hover {
+            box-shadow: 0 0 0 1px rgba(139,0,0,0.4), 0 0 40px rgba(139,0,0,0.15), 0 20px 50px rgba(0,0,0,0.6);
+        }
+
+        /* ─── 3D Tilt card wrapper ─── */
+        .tilt-card {
+            transform-style: preserve-3d;
+            will-change: transform;
+            transform: perspective(900px) rotateX(0deg) rotateY(0deg);
+            transition: transform 0.1s ease-out;
+        }
+        .tilt-card .tilt-shine {
+            position: absolute;
+            inset: 0; z-index: 20;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 0%, transparent 65%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tilt-card:hover .tilt-shine { opacity: 1; }
+
+        /* ─── CSS Jitter shake on card hover border ─── */
+        @keyframes jitter-border {
+            0%,100% { box-shadow: 0 0 0 1px rgba(139,0,0,0.5); transform: translate(0,0); }
+            10%     { box-shadow: 1px 0 0 1px rgba(139,0,0,0.6); transform: translate(-1px, 1px); }
+            20%     { box-shadow:-1px 0 0 1px rgba(139,0,0,0.4); transform: translate(1px,-1px); }
+            30%     { box-shadow: 0 1px 0 1px rgba(139,0,0,0.7); transform: translate(0, 1px); }
+            40%     { box-shadow: 0-1px 0 1px rgba(139,0,0,0.5); transform: translate(-1px,-1px); }
+            50%     { box-shadow: 1px 1px 0 1px rgba(139,0,0,0.6); transform: translate(1px, 1px); }
+            60%     { box-shadow:-1px-1px 0 1px rgba(139,0,0,0.4); transform: translate(-1px, 0); }
+            70%     { box-shadow: 0 0 0 1px rgba(139,0,0,0.6); transform: translate(0,-1px); }
+        }
+        .gothic-card:hover {
+            animation: jitter-border 0.12s steps(1) 0s 4;
+        }
+
+        /* ─── Spark / ember particle ─── */
+        .spark {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99997;
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: #8B0000;
+            box-shadow: 0 0 6px #CC1111;
+        }
+
+        /* ─── Framer-style spring entrance class (JS-driven) ─── */
+        .framer-hidden {
+            opacity: 0;
+            transform: translateY(30px) scale(0.96);
+            filter: blur(8px);
+        }
+
+        /* ─── Breathing CTA glow ─── */
+        @keyframes breathe-cta {
+            0%,100% { box-shadow: 0 0 30px rgba(139,0,0,0.3), 0 0 60px rgba(139,0,0,0.1); }
+            50%      { box-shadow: 0 0 60px rgba(139,0,0,0.7), 0 0 120px rgba(139,0,0,0.25); }
+        }
+        .breathe-cta { animation: breathe-cta 2.8s ease-in-out infinite; }
+
+        /* ─── Netlify Form Inputs ─── */
+        .nox-input {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(139,0,0,0.25);
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            padding: 14px 18px;
+            outline: none;
+            transition: border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+        }
+        .nox-input::placeholder { color: rgba(161,161,170,0.5); }
+        .nox-input:focus {
+            border-color: rgba(139,0,0,0.7);
+            background: rgba(139,0,0,0.05);
+            box-shadow: 0 0 0 3px rgba(139,0,0,0.12), 0 0 20px rgba(139,0,0,0.1);
+        }
+        .nox-select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B0000' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+        .nox-select option { background: #0A0A0A; color: #fff; }
+
+        /* ─── Section heading jitter on hover ─── */
+        .jitter-hover {
+            display: inline-block;
+            transition: color 0.2s ease;
+        }
+        .jitter-hover:hover {
+            animation: headingJitter 0.3s steps(1) forwards;
+        }
+        @keyframes headingJitter {
+            0%  { transform: skewX(0deg)   translateX(0);    }
+            15% { transform: skewX(-2deg)  translateX(-3px); }
+            30% { transform: skewX(2.5deg) translateX(3px);  filter: brightness(1.2) hue-rotate(10deg); }
+            45% { transform: skewX(-1deg)  translateX(-2px); }
+            60% { transform: skewX(1.5deg) translateX(2px);  }
+            75% { transform: skewX(-0.5deg)translateX(-1px); }
+            100%{ transform: skewX(0deg)   translateX(0);    }
+        }
+
+        /* ─── Gothic Navbar ─── */
+        #navbar {
+            background: transparent;
+            transition: background 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
+        }
+        #navbar.scrolled {
+            background: rgba(0,0,0,0.88);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border-bottom-color: rgba(139,0,0,0.25) !important;
+            box-shadow: 0 1px 0 rgba(139,0,0,0.15), 0 8px 40px rgba(0,0,0,0.8);
+        }
+        /* Animated blood-red underline on nav links */
+        .nav-link {
+            position: relative;
+            padding-bottom: 2px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 50%; bottom: -2px;
+            width: 0; height: 1px;
+            background: #8B0000;
+            box-shadow: 0 0 6px rgba(139,0,0,0.9);
+            transition: width 0.35s cubic-bezier(0.16,1,0.3,1), left 0.35s cubic-bezier(0.16,1,0.3,1);
+        }
+        .nav-link:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        /* Pulsing bottom border of navbar */
+        #navbar-border {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #8B0000 30%, #CC1111 50%, #8B0000 70%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            animation: borderBlood 3s ease-in-out infinite;
+        }
+        #navbar.scrolled #navbar-border {
+            opacity: 1;
+        }
+        @keyframes borderBlood {
+            0%,100% { opacity: 0.4; }
+            50%      { opacity: 1; }
+        }
+        /* Logo mini skull ornament */
+        .logo-skull {
+            display: inline-block;
+            vertical-align: middle;
+            opacity: 0.7;
+            transition: opacity 0.3s ease, filter 0.3s ease;
+        }
+        .logo-skull:hover { opacity: 1; filter: drop-shadow(0 0 6px rgba(139,0,0,0.9)); }
+    </style>
+</head>
+<body class="overflow-x-hidden noise-bg bg-ui-0 font-sans">
+
+    <!-- ─── Custom Skull Cursor ─── -->
+    <!-- Trail skull (follows with lag) -->
+    <svg id="skull-cursor-trail" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="50" cy="42" rx="30" ry="28" fill="#5A0000" opacity="0.9"/>
+        <rect x="30" y="62" width="12" height="12" rx="2" fill="#5A0000"/>
+        <rect x="58" y="62" width="12" height="12" rx="2" fill="#5A0000"/>
+        <ellipse cx="38" cy="42" rx="8" ry="9" fill="black"/>
+        <ellipse cx="62" cy="42" rx="8" ry="9" fill="black"/>
+        <rect x="43" y="68" width="14" height="4" rx="1" fill="black" opacity="0.5"/>
+        <rect x="44" y="56" width="12" height="5" rx="1" fill="#3A0000" opacity="0.6"/>
+    </svg>
+    <!-- Main skull cursor -->
+    <svg id="skull-cursor" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Skull dome -->
+        <ellipse cx="50" cy="42" rx="30" ry="28" fill="#E8E0D8"/>
+        <!-- Cheekbones -->
+        <ellipse cx="28" cy="56" rx="10" ry="7" fill="#D4CAC0"/>
+        <ellipse cx="72" cy="56" rx="10" ry="7" fill="#D4CAC0"/>
+        <!-- Jaw -->
+        <rect x="30" y="60" width="40" height="16" rx="5" fill="#D4CAC0"/>
+        <!-- Eye sockets -->
+        <ellipse cx="38" cy="42" rx="9" ry="10" fill="#1a0000"/>
+        <ellipse cx="62" cy="42" rx="9" ry="10" fill="#1a0000"/>
+        <!-- Eye glow -->
+        <ellipse cx="38" cy="42" rx="5" ry="5.5" fill="#8B0000" opacity="0.7"/>
+        <ellipse cx="62" cy="42" rx="5" ry="5.5" fill="#8B0000" opacity="0.7"/>
+        <!-- Nose cavity -->
+        <path d="M46 52 Q50 58 54 52 L52 48 Q50 46 48 48 Z" fill="#1a0000"/>
+        <!-- Teeth dividers -->
+        <line x1="44" y1="60" x2="44" y2="76" stroke="#B0A898" stroke-width="1.5"/>
+        <line x1="50" y1="60" x2="50" y2="76" stroke="#B0A898" stroke-width="1.5"/>
+        <line x1="56" y1="60" x2="56" y2="76" stroke="#B0A898" stroke-width="1.5"/>
+        <!-- Crack detail -->
+        <path d="M50 18 L52 28 L49 35" stroke="rgba(0,0,0,0.2)" stroke-width="1" fill="none"/>
+    </svg>
+
+    <!-- ─── Gothic Navbar ─── -->
+    <nav class="fixed w-full z-40 top-0 border-b border-transparent" id="navbar">
+        <!-- Pulsing blood-line border -->
+        <div id="navbar-border"></div>
+
+        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+
+            <!-- Brand: Cinzel Decorative + flanking micro-skulls -->
+            <a href="#" class="flex items-center gap-3 group">
+                <!-- Left micro-skull -->
+                <svg class="logo-skull w-5 h-5" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="50" cy="42" rx="28" ry="26" fill="#8B0000"/>
+                    <ellipse cx="38" cy="42" rx="8" ry="9" fill="#1a0000"/>
+                    <ellipse cx="62" cy="42" rx="8" ry="9" fill="#1a0000"/>
+                    <ellipse cx="38" cy="42" rx="4" ry="4.5" fill="#CC1111" opacity="0.6"/>
+                    <ellipse cx="62" cy="42" rx="4" ry="4.5" fill="#CC1111" opacity="0.6"/>
+                    <path d="M46 53 Q50 59 54 53 L52 49 Q50 47 48 49 Z" fill="#1a0000"/>
+                    <rect x="31" y="61" width="38" height="14" rx="4" fill="#7A0000"/>
+                    <line x1="44" y1="61" x2="44" y2="75" stroke="#3A0000" stroke-width="1.5"/>
+                    <line x1="50" y1="61" x2="50" y2="75" stroke="#3A0000" stroke-width="1.5"/>
+                    <line x1="56" y1="61" x2="56" y2="75" stroke="#3A0000" stroke-width="1.5"/>
+                </svg>
+
+                <!-- Brand word -->
+                <span class="font-gothic text-xl font-black tracking-[0.15em] text-white uppercase
+                             group-hover:text-red-200 transition-colors duration-500
+                             [text-shadow:0_0_20px_rgba(139,0,0,0.4)]">
+                    NOX
+                </span>
+
+                <!-- Right micro-skull (mirrored) -->
+                <svg class="logo-skull w-5 h-5 scale-x-[-1]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <ellipse cx="50" cy="42" rx="28" ry="26" fill="#8B0000"/>
+                    <ellipse cx="38" cy="42" rx="8" ry="9" fill="#1a0000"/>
+                    <ellipse cx="62" cy="42" rx="8" ry="9" fill="#1a0000"/>
+                    <ellipse cx="38" cy="42" rx="4" ry="4.5" fill="#CC1111" opacity="0.6"/>
+                    <ellipse cx="62" cy="42" rx="4" ry="4.5" fill="#CC1111" opacity="0.6"/>
+                    <path d="M46 53 Q50 59 54 53 L52 49 Q50 47 48 49 Z" fill="#1a0000"/>
+                    <rect x="31" y="61" width="38" height="14" rx="4" fill="#7A0000"/>
+                    <line x1="44" y1="61" x2="44" y2="75" stroke="#3A0000" stroke-width="1.5"/>
+                    <line x1="50" y1="61" x2="50" y2="75" stroke="#3A0000" stroke-width="1.5"/>
+                    <line x1="56" y1="61" x2="56" y2="75" stroke="#3A0000" stroke-width="1.5"/>
+                </svg>
+            </a>
+
+            <!-- Gothic Nav Links -->
+            <div class="hidden md:flex items-center gap-10">
+                <!-- Decorative rune separator -->
+                <span class="text-blood-500/30 text-[10px] tracking-[0.5em] font-mono select-none">✦</span>
+
+                <a href="#protocol" class="nav-link font-gothic text-[11px] font-semibold tracking-[0.25em] uppercase text-zinc-400 hover:text-white transition-colors duration-300">
+                    Protocol
+                </a>
+
+                <span class="text-blood-500/20 text-[8px] select-none">☽</span>
+
+                <a href="#identity" class="nav-link font-gothic text-[11px] font-semibold tracking-[0.25em] uppercase text-zinc-400 hover:text-white transition-colors duration-300">
+                    Philosophy
+                </a>
+
+                <span class="text-blood-500/30 text-[10px] tracking-[0.5em] font-mono select-none">✦</span>
+
+                <!-- Gothic CTA pill -->
+                <a href="#syndicate" class="font-gothic text-[10px] font-bold tracking-[0.2em] uppercase
+                                           px-5 py-2 border border-blood-500/50 rounded-full text-blood-300
+                                           hover:bg-blood-500/10 hover:border-blood-400 hover:text-white
+                                           hover:shadow-[0_0_20px_rgba(139,0,0,0.4)]
+                                           transition-all duration-400">
+                    Enter
+                </a>
+            </div>
+
+            <!-- Mobile hamburger (gothic bars) -->
+            <button id="mobile-menu-btn" class="md:hidden flex flex-col gap-[5px] p-2" aria-label="Menu">
+                <span class="block w-6 h-[1px] bg-blood-400"></span>
+                <span class="block w-4 h-[1px] bg-blood-400/60"></span>
+                <span class="block w-6 h-[1px] bg-blood-400"></span>
+            </button>
+        </div>
+
+        <!-- Mobile dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden px-8 pb-6 pt-2 border-t border-blood-500/10 bg-black/90 backdrop-blur-xl">
+            <div class="flex flex-col gap-5">
+                <a href="#protocol" class="font-gothic text-sm tracking-[0.2em] uppercase text-zinc-400 hover:text-white transition-colors">Protocol</a>
+                <a href="#identity" class="font-gothic text-sm tracking-[0.2em] uppercase text-zinc-400 hover:text-white transition-colors">Philosophy</a>
+                <a href="#syndicate" class="font-gothic text-sm tracking-[0.2em] uppercase text-blood-400 hover:text-white transition-colors">Enter the Syndicate</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 1. Hero Section (Maximum Breathing Space) -->
+    <!-- bg-ui-0 -> #000000 -->
+    <section class="relative min-h-screen flex flex-col justify-center pt-32 pb-24 lg:pb-40 px-6 lg:px-8 bg-ui-0 overflow-hidden gothic-glow">
+        <!-- ─── Orbiting sigil ring ─── -->
+        <svg id="sigil-ring" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="300" cy="300" r="280" stroke="#8B0000" stroke-width="0.8" fill="none" stroke-dasharray="4 12"/>
+            <circle cx="300" cy="300" r="260" stroke="#8B0000" stroke-width="0.3" fill="none"/>
+            <circle cx="300" cy="300" r="240" stroke="#8B0000" stroke-width="0.6" fill="none" stroke-dasharray="2 20"/>
+            <!-- Rune glyphs at cardinal positions -->
+            <text x="295" y="30"  font-size="18" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16AA;</text>
+            <text x="295" y="582" font-size="18" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16B9;</text>
+            <text x="14"  y="307" font-size="18" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16C1;</text>
+            <text x="580" y="307" font-size="18" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16DA;</text>
+            <!-- Diagonal runes -->
+            <text x="97"  y="97"  font-size="14" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16A6;</text>
+            <text x="503" y="97"  font-size="14" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16B1;</text>
+            <text x="97"  y="510" font-size="14" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16CF;</text>
+            <text x="503" y="510" font-size="14" fill="#8B0000" text-anchor="middle" font-family="serif">&#x16E3;</text>
+        </svg>
+
+        <div class="w-full max-w-7xl mx-auto gs-hero-container relative z-10 flex flex-col items-center">
+            
+            <!-- Hero Video: Flawless Focal Point -->
+            <div class="w-full aspect-[16/9] relative rounded-2xl border border-ui-border overflow-hidden shadow-[0_40px_120px_rgba(0,0,0,1)] filter grayscale-[15%] contrast-[1.05] mb-16 ring-1 ring-white/5 ring-inset">
+                <div class="absolute inset-0 bg-gradient-to-t from-ui-0 via-transparent to-ui-0/40 z-10 pointer-events-none"></div>
+                <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                    <source src="Images/hero.mp4" type="video/mp4">
+                </video>
+                
+                <!-- Central Typography: Expensive Editoral Design -->
+                <div class="absolute inset-0 z-20 flex flex-col items-center justify-center pointer-events-none p-4 lg:p-8">
+                    <!-- Tight kerning, exact line height to prevent optical spread -->
+                    <h1 class="font-gothic text-[4rem] md:text-[7rem] lg:text-[11rem] font-bold tracking-[-0.04em] uppercase text-transparent gs-split-hero glitch text-center leading-[0.9] lg:leading-[0.85]" data-text="EMBRACE THE VOID" style="clip-path: polygon(0 0, 100% 0, 100% 120%, 0% 120%); -webkit-text-stroke: 1px rgba(255,255,255,0.85);">
+                        EMBRACE<br>THE VOID
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Primary Global CTA: Unmissable hierarchy -->
+            <div class="gs-fade-up z-30">
+                <a href="#syndicate" class="inline-block bg-blood-500 text-white font-gothic font-semibold tracking-widest uppercase px-10 py-4 rounded-full text-xs border border-blood-400/40 shadow-[0_0_30px_rgba(139,0,0,0.4)] hover:shadow-[0_0_60px_rgba(139,0,0,0.8)] hover:bg-blood-400 transition-all duration-500 transform hover:scale-[1.02]">
+                    Acquire NOX
+                </a>
+            </div>
+            
+            <!-- Contextual Micro-copy under CTA -->
+            <div class="text-[11px] font-mono uppercase tracking-[0.2em] text-ui-mutetext mt-6 gs-fade-up style='transition-delay: 0.1s;'">
+                Production Batch No.01
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Blood Drip Divider -->
+    <div class="drip-divider relative z-10" style="margin-top:-2px; background:#000;">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 L1440,0 L1440,10 Q1200,10 1100,28 Q1020,40 980,55 Q960,62 940,55 Q900,40 820,20 Q740,5 700,18 Q660,30 620,48 Q600,58 580,48 Q540,28 460,12 Q380,0 300,15 Q240,26 200,45 Q180,55 160,45 Q120,22 60,10 Q30,5 0,10 Z" fill="#0A0A0A"/>
+            <!-- Drip drops -->
+            <ellipse cx="620" cy="60" rx="5" ry="8" fill="#8B0000" opacity="0.7"/>
+            <ellipse cx="580" cy="70" rx="3.5" ry="6" fill="#8B0000" opacity="0.5"/>
+            <ellipse cx="940" cy="62" rx="4" ry="7" fill="#8B0000" opacity="0.6"/>
+            <ellipse cx="200" cy="55" rx="3" ry="5" fill="#8B0000" opacity="0.4"/>
+        </svg>
+    </div>
+
+    <!-- 2. Topology & Philosophy (Depth Layer 1) -->
+    <section id="protocol" class="relative py-24 lg:py-48 px-6 lg:px-8 overflow-hidden bg-ui-1 border-t border-blood-500/10 gothic-glow">
+        
+        <!-- Receding background element (opacity dropped to not compete with content) -->
+        <div class="absolute top-0 right-0 h-full w-24 flex flex-col justify-center overflow-hidden pointer-events-none z-0">
+            <div class="font-display text-[6rem] lg:text-[10rem] font-bold tracking-tight text-white whitespace-nowrap -rotate-90 origin-center opacity-[0.02] select-none" id="side-scroll-text">
+                THE UNDERGROUND •
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto relative z-10 flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+            
+            <div class="w-full lg:w-1/2 flex flex-col">
+                <!-- Optical alignment guide / Micro-UI anchor -->
+                <div class="flex items-center gap-6 mb-16 gs-fade">
+                    <div class="w-12 h-[1px] bg-blood-500/60"></div>
+                    <span class="gothic-label text-[10px] font-semibold tracking-[0.25em] uppercase">The Protocol</span>
+                </div>
+                
+                <!-- H2: Clean, structured typography. No noisy outlines. -->
+                <h2 class="font-display text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight mb-12 leading-[1.1] gs-split text-white/95">
+                    Crafted for the loud,<br>
+                    the unapologetic,<br>
+                    and the alternative.
+                </h2>
+                
+                <div class="space-y-8 text-base md:text-lg text-ui-text font-light gs-fade max-w-2xl leading-relaxed">
+                    <p>
+                        We didn't brew this for the daylight walkers. NOX is the antithesis of watered-down sweetness and artificial noise. It's a meticulous, cold-brewed reality check.
+                    </p>
+                    <p>
+                        You have a strong opinion. You have a voice. You demand fuel that doesn't force a jittery compromise with mainstream expectations. 
+                    </p>
+                    <!-- Removed peach line to preserve CTA dominance. Replaced with subtle border structure -->
+                    <div class="pt-8 mt-8 border-t border-ui-border">
+                        <p class="text-white font-medium tracking-widest text-[11px] uppercase">
+                            Zero Syrupy Bullshit. Pure Focus.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Protocol Video Side -->
+            <div class="w-full lg:w-1/2 relative">
+                <div class="aspect-[4/5] rounded-2xl overflow-hidden relative img-reveal group gothic-card blood-glow">
+                    <div class="absolute inset-0 bg-gradient-to-t from-blood-500/10 via-transparent to-transparent group-hover:from-blood-500/20 transition-all duration-[1.5s] z-10 pointer-events-none"></div>
+                    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transform group-hover:scale-[1.03] transition-all duration-[2s] ease-out">
+                        <source src="Images/The protocol.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Blood Drip Divider -->
+    <div class="drip-divider relative z-10" style="background:#0A0A0A; margin-bottom:-1px;">
+        <svg viewBox="0 0 1440 50" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,50 L0,30 Q120,15 240,30 Q360,45 480,25 Q540,15 560,30 Q580,45 600,35 Q660,10 780,25 Q900,40 1020,20 Q1080,8 1120,22 Q1160,36 1200,22 Q1320,5 1440,20 L1440,50 Z" fill="#000000"/>
+            <ellipse cx="560" cy="46" rx="4" ry="7" fill="#8B0000" opacity="0.6"/>
+            <ellipse cx="600" cy="50" rx="3" ry="5" fill="#8B0000" opacity="0.4"/>
+            <ellipse cx="1120" cy="44" rx="4.5" ry="8" fill="#8B0000" opacity="0.55"/>
+        </svg>
+    </div>
+
+    <!-- 2.5 Typography Brand Exhibition -->
+    <section id="typography" class="py-24 lg:py-48 px-6 lg:px-8 bg-ui-0 relative border-t border-blood-500/10">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 lg:gap-24 items-center">
+            
+            <!-- Left Side: Large Copy -->
+            <div class="w-full lg:w-5/12 flex flex-col justify-center">
+                <div class="gothic-label text-[10px] font-semibold tracking-[0.25em] uppercase mb-8 gs-fade">Typography & Voice</div>
+                <h2 class="font-display text-5xl lg:text-[5.5rem] font-bold tracking-[-0.04em] leading-[0.85] text-white/95 mb-10 gs-split">
+                    SPEAK<br>LOUDLY.<br>LEAVE<br>NO TRACE.
+                </h2>
+                <div class="text-base text-ui-text font-light leading-relaxed gs-fade">
+                    The NOX voice is absolute. Uncompromised L-Theanine clarity cut with real midnight peaches. No artificial noise. No jittery crashes. Just pure, targeted focus for the underground. 
+                </div>
+            </div>
+
+            <!-- Right Side: Staggered Image Grid -->
+            <div class="w-full lg:w-7/12 grid grid-cols-2 gap-6 relative">
+                <!-- Image 1: Tall left -->
+                <div class="col-span-1 aspect-[2/3] rounded-2xl border border-ui-border overflow-hidden relative shadow-2xl img-reveal mt-12 group">
+                    <div class="absolute inset-0 bg-ui-0/10 group-hover:bg-transparent transition-colors duration-[1.5s] z-10 pointer-events-none"></div>
+                    <img src="Images/typography (1).png" alt="Typography Detail 1" class="absolute inset-0 w-full h-[110%] object-cover grayscale-[60%] hover:grayscale-0 transition-all duration-[1.5s] ease-out parallax-media">
+                </div>
+                <!-- Image 2 & 3: Stacked right -->
+                <div class="col-span-1 flex flex-col gap-6">
+                    <div class="aspect-square rounded-2xl border border-ui-border overflow-hidden relative shadow-2xl img-reveal group">
+                        <div class="absolute inset-0 bg-ui-0/10 group-hover:bg-transparent transition-colors duration-[1.5s] z-10 pointer-events-none"></div>
+                        <img src="Images/typography (2).png" alt="Typography Detail 2" class="absolute inset-0 w-full h-full object-cover grayscale-[60%] hover:grayscale-0 transform group-hover:scale-[1.03] transition-all duration-[2s] ease-out">
+                    </div>
+                    <div class="aspect-[4/5] rounded-2xl border border-ui-border overflow-hidden relative shadow-2xl img-reveal group">
+                        <div class="absolute inset-0 bg-ui-0/10 group-hover:bg-transparent transition-colors duration-[1.5s] z-10 pointer-events-none"></div>
+                        <img src="Images/typography (3).png" alt="Typography Detail 3" class="absolute inset-0 w-full h-full object-cover grayscale-[60%] hover:grayscale-0 transform group-hover:scale-[1.03] transition-all duration-[2s] ease-out">
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- 3. Aesthetics / Lifestyle Gallery (Depth Layer 2) -->
+    <!-- Transition to bg-ui-2 (#111113) for the elevated cards feel -->
+    <section id="identity" class="py-24 lg:py-48 px-6 lg:px-8 bg-ui-2 relative border-y border-ui-border">
+        <div class="max-w-7xl mx-auto">
+            
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-20 gs-fade gap-8">
+                <div>
+                    <div class="gothic-label text-[10px] font-semibold tracking-[0.25em] uppercase mb-4">Visual Identity</div>
+                    <h2 class="font-display text-3xl md:text-4xl font-medium tracking-tight text-white/95">Born in the Dark</h2>
+                </div>
+                <div class="max-w-sm text-sm text-ui-text font-light leading-relaxed">
+                    A visual exploration of the nocturnal aesthetic driving the NOX identity. Unapologetic and uncompromised.
+                </div>
+            </div>
+            
+            <!-- Exact 8px spacing metrics (`gap-8` = 32px) -->
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 auto-rows-min">
+                <!-- Card Component Sub-System (Consistent borders, internal rounding) -->
+                <!-- Gallery 1 -->
+                <div class="md:col-span-7 aspect-[4/3] rounded-2xl border border-ui-border overflow-hidden relative img-reveal group shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+                    <div class="absolute inset-0 bg-ui-0/10 group-hover:bg-transparent transition-colors duration-[1.5s] z-10 pointer-events-none"></div>
+                    <img src="Images/Gallery1.png" alt="Alternative Culture" class="absolute inset-0 w-full h-[110%] object-cover grayscale-[60%] hover:grayscale-0 transition-all duration-[1.5s] ease-out parallax-media">
+                </div>
+                <!-- Gallery 2 -->
+                <div class="aspect-[3/4] md:col-span-5 rounded-2xl border border-ui-border overflow-hidden relative img-reveal group shadow-[0_20px_50px_rgba(0,0,0,0.4)] md:mt-24">
+                    <div class="absolute inset-0 bg-ui-0/10 group-hover:bg-transparent transition-colors duration-[1.5s] z-10 pointer-events-none"></div>
+                    <img src="Images/Gallery2.png" alt="Nocturnal Setup" class="absolute inset-0 w-full h-full object-cover grayscale-[60%] hover:grayscale-0 transform group-hover:scale-[1.03] transition-all duration-[2s] ease-out">
+                </div>
+                <!-- Gallery 3 -->
+                <div class="aspect-video md:aspect-[21/9] md:col-span-12 rounded-2xl border border-ui-border overflow-hidden relative img-reveal group mt-0 lg:mt-8 shadow-[0_20px_50px_rgba(0,0,0,0.4)]">
+                    <div class="absolute inset-0 bg-ui-0/30 group-hover:bg-transparent transition-colors duration-[1.5s] z-10 pointer-events-none"></div>
+                    <img src="Images/Gallery3.png" alt="Alternative Scene" class="absolute inset-0 w-full h-[120%] object-cover grayscale-[60%] hover:grayscale-0 transition-all duration-[1.5s] ease-out parallax-media">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ─── NETLIFY WAITLIST FORM SECTION ─── -->
+    <section id="waitlist" class="relative py-24 lg:py-40 px-6 lg:px-8 bg-ui-0 border-t border-blood-500/15 overflow-hidden">
+
+        <!-- Background rune watermark -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none" aria-hidden="true">
+            <span class="font-gothic text-[20rem] font-black text-white/[0.015] tracking-tighter leading-none">☦</span>
+        </div>
+
+        <div class="max-w-2xl mx-auto relative z-10 flex flex-col items-center text-center">
+
+            <!-- Label -->
+            <div class="flex items-center gap-5 mb-10 gs-fade">
+                <div class="w-8 h-[1px] bg-blood-500/60"></div>
+                <span class="gothic-label text-[10px] tracking-[0.3em] uppercase">Join The Underground</span>
+                <div class="w-8 h-[1px] bg-blood-500/60"></div>
+            </div>
+
+            <!-- Heading -->
+            <h2 class="font-gothic text-4xl md:text-5xl font-black tracking-tight text-white/95 leading-tight mb-5 gs-split"
+                style="text-shadow: 0 0 40px rgba(139,0,0,0.3);">
+                Claim Your Drop.
+            </h2>
+            <p class="text-ui-text font-light text-base leading-relaxed mb-12 max-w-md gs-fade">
+                Be first when NOX hits shelves. No noise. No weekly newsletters. Just one signal when the batch drops.
+            </p>
+
+            <!-- Netlify Form -->
+            <!-- Netlify detects this form at build time via data-netlify="true" -->
+            <form
+                id="nox-waitlist-form"
+                name="nox-waitlist"
+                method="POST"
+                data-netlify="true"
+                netlify-honeypot="bot-field"
+                class="w-full flex flex-col gap-4"
+            >
+                <!-- Required hidden field for JS/AJAX submission -->
+                <input type="hidden" name="form-name" value="nox-waitlist">
+
+                <!-- Honeypot spam trap (hidden from real users) -->
+                <div class="hidden" aria-hidden="true">
+                    <label>Don’t fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
+                </div>
+
+                <!-- Name + Email row -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="relative flex-1">
+                        <input
+                            type="text"
+                            name="name"
+                            id="form-name-input"
+                            placeholder="Your Name"
+                            required
+                            autocomplete="name"
+                            class="nox-input w-full"
+                        >
+                        <div class="nox-input-line"></div>
+                    </div>
+                    <div class="relative flex-1">
+                        <input
+                            type="email"
+                            name="email"
+                            id="form-email"
+                            placeholder="your@email.com"
+                            required
+                            autocomplete="email"
+                            class="nox-input w-full"
+                        >
+                        <div class="nox-input-line"></div>
+                    </div>
+                </div>
+
+                <!-- Optional drop preference -->
+                <div class="relative">
+                    <select name="how-heard" id="form-how-heard" class="nox-input nox-select w-full">
+                        <option value="" disabled selected>How did you find the underground?</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="friend">A Friend in the Dark</option>
+                        <option value="event">Live Event</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="nox-input-line"></div>
+                </div>
+
+                <!-- Submit -->
+                <button
+                    type="submit"
+                    id="form-submit-btn"
+                    class="mt-2 w-full font-gothic font-bold tracking-[0.25em] uppercase text-sm
+                           py-4 px-10 rounded-full border border-blood-500/60
+                           bg-blood-500/10 text-white
+                           hover:bg-blood-500 hover:border-blood-400
+                           hover:shadow-[0_0_50px_rgba(139,0,0,0.5)]
+                           transition-all duration-500 relative overflow-hidden group breathe-cta"
+                >
+                    <span id="btn-text">Enter the Syndicate &rarr;</span>
+                    <span id="btn-loading" class="hidden">Binding the covenant…</span>
+                </button>
+            </form>
+
+            <!-- Success toast (shown after submission) -->
+            <div id="form-success" class="hidden mt-8 w-full py-5 px-6 rounded-2xl border border-blood-500/40
+                                          bg-blood-500/10 backdrop-blur-md text-center gs-fade">
+                <p class="font-gothic text-white text-lg tracking-wide mb-1">☠ You are bound.</p>
+                <p class="text-ui-text text-sm font-light">The signal will find you when the batch drops.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 4. Final Focus Section: SaaS CTA Architecture -->
+    <!-- Return to ground zero bg-ui-0 (#000000) for final dominant conversion zone -->
+    <section id="syndicate" class="relative min-h-[90vh] flex flex-col items-center justify-center py-32 lg:py-40 px-6 lg:px-8 bg-ui-0 overflow-hidden">
+        
+        <!-- Brutalist Drop Video receding completely into background (texture, not noise) -->
+        <div class="absolute inset-0 w-full h-full z-0 opacity-20 pointer-events-none">
+            <div class="absolute inset-0 bg-gradient-to-t from-ui-0 via-transparent to-ui-0 z-10 mix-blend-multiply"></div>
+            <video autoplay loop muted playsinline class="w-full h-full object-cover filter grayscale contrast-125">
+                <source src="Images/make_the_smoke_202604161947.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="relative z-30 flex flex-col items-center w-full max-w-3xl text-center">
+            
+            <h2 class="font-display text-[3.5rem] md:text-[6rem] lg:text-[7rem] font-bold tracking-tight text-white gs-split leading-[0.9] mb-12" style="clip-path: polygon(0 0, 100% 0, 100% 120%, 0% 120%);">
+                ENTER THE<br>SYNDICATE
+            </h2>
+
+            <div class="text-base text-ui-text font-light mb-12 gs-fade leading-relaxed max-w-xl">
+                The world is too loud and too fake. Claim your corner of the night. Experience the clarity of NOX.
+            </div>
+
+            <!-- Magnetic Wrap isolating the interaction -->
+            <div class="magnetic-wrap gs-fade">
+                <!-- Gothic dominant Primary CTA -->
+                <button id="btn-claim" class="btn-magnetic bg-blood-500 text-white font-gothic font-semibold tracking-widest uppercase px-14 py-5 rounded-full text-sm border border-blood-400/40 shadow-[0_0_50px_rgba(139,0,0,0.35)] hover:shadow-[0_0_90px_rgba(139,0,0,0.75)] hover:bg-blood-400 hover:scale-105 transition-all duration-[0.4s]">
+                    Claim Your Night
+                </button>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Footer: Clean, hierarchical alignment -->
+    <footer class="bg-ui-0 py-16 px-8 border-t border-ui-border relative z-40">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center text-ui-mutetext font-sans text-xs tracking-widest uppercase">
+            <div class="font-display font-semibold text-white/90 mb-8 md:mb-0 text-2xl tracking-tighter">NOX</div>
+            <div class="flex flex-col md:flex-row gap-8 md:gap-16 mb-8 md:mb-0">
+                <a href="#" class="hover:text-white transition-colors duration-300">Instagram</a>
+                <a href="#" class="hover:text-white transition-colors duration-300">Manifesto</a>
+                <a href="#" class="hover:text-white transition-colors duration-300">Terms of Service</a>
+            </div>
+            <div class="text-[10px]">
+                &copy; 2026 The Underground
+            </div>
+        </div>
+    </footer>
+
+    <!-- 5. Flavor Portal (Mini-Page Overlay) -->
+    <div id="flavor-portal" class="fixed inset-0 bg-ui-0/95 backdrop-blur-3xl z-50 overflow-y-auto opacity-0 pointer-events-none hidden" style="will-change: opacity, transform;">
+        
+        <!-- Close Button -->
+        <button id="close-portal" class="absolute top-6 right-6 lg:top-8 lg:right-8 text-ui-text hover:text-white transition-colors text-xs font-semibold tracking-[0.25em] uppercase z-[60] py-2 px-6 border border-white/10 rounded-full hover:bg-white/5">
+            Close
+        </button>
+
+        <div class="w-full max-w-7xl mx-auto flex flex-col lg:flex-row min-h-screen">
+            <!-- Video Side -->
+            <div class="w-full lg:w-1/2 flex items-center justify-center p-8 pt-32 lg:p-16 lg:h-screen">
+                <!-- Scale container for animation inside modal -->
+                <div class="portal-media w-full aspect-[3/4] max-w-md rounded-2xl overflow-hidden shadow-[0_0_100px_rgba(255,119,51,0.08)] relative border border-white/10">
+                    <video id="portal-video" loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+                        <source src="Images/Spining.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+
+            <!-- Content Side -->
+            <div class="w-full lg:w-1/2 flex flex-col justify-center p-8 pb-32 lg:pr-16 lg:h-screen relative">
+                <div class="portal-text">
+                    <div class="text-[10px] font-sans font-semibold tracking-[0.25em] uppercase text-peach-500 mb-6 gs-portal-fade">Formula 01</div>
+                    <!-- Protective wrapper to maintain layout height regardless of JS splitting -->
+                    <div class="mb-16 lg:mb-32">
+                        <h2 class="font-display text-4xl md:text-5xl lg:text-[5.5rem] font-bold tracking-[-0.02em] leading-[1.1] lg:leading-[0.95] text-white/95 gs-portal-split pb-8">
+                            MIDNIGHT<br>PEACH<br>BLACK TEA.
+                        </h2>
+                    </div>
+                    <div class="text-base text-ui-text font-light leading-relaxed max-w-md gs-portal-fade mt-16 lg:mt-24">
+                        A clinical blend of 100% natural black tea extract colliding with the dark sweetness of midnight peaches. Zero sugar. Zero crash. Just an unapologetic, razor-sharp focus engineered for the after-hours.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+    <!-- GSAP MotionPathPlugin for cursor trail arc -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ═══════════════════════════════════════════
+        // GOTHIC SKULL CURSOR
+        // ═══════════════════════════════════════════
+        (() => {
+            const skull = document.getElementById('skull-cursor');
+            const trail = document.getElementById('skull-cursor-trail');
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+
+            // Instantly snap main skull to mouse
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                gsap.to(skull, {
+                    x: mouseX, y: mouseY,
+                    duration: 0.08,
+                    ease: 'power2.out',
+                    overwrite: true
+                });
+                // Trail follows with lag and slight wobble
+                gsap.to(trail, {
+                    x: mouseX, y: mouseY,
+                    duration: 0.45,
+                    ease: 'power3.out',
+                    overwrite: true
+                });
+            });
+
+            // Scale up + glow on hoverable elements
+            const hoverEls = document.querySelectorAll('a, button, [role="button"]');
+            hoverEls.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    skull.classList.add('hovering');
+                    gsap.to(skull, { scale: 1.4, duration: 0.3, ease: 'back.out(2)' });
+                    gsap.to(trail, { scale: 0.6, opacity: 0.15, duration: 0.3 });
+                });
+                el.addEventListener('mouseleave', () => {
+                    skull.classList.remove('hovering');
+                    gsap.to(skull, { scale: 1, duration: 0.5, ease: 'elastic.out(1, 0.4)' });
+                    gsap.to(trail, { scale: 1, opacity: 0.35, duration: 0.4 });
+                });
+            });
+
+            // Idle float animation on trail
+            gsap.to(trail, {
+                y: '+=6',
+                rotation: 8,
+                duration: 1.8,
+                ease: 'sine.inOut',
+                yoyo: true,
+                repeat: -1,
+                transformOrigin: '50% 50%'
+            });
+
+            // Skull jaw chatter on click
+            document.addEventListener('mousedown', () => {
+                gsap.to(skull, { scaleY: 0.88, duration: 0.08, ease: 'power4.out', yoyo: true, repeat: 3 });
+            });
+        })();
+
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // Motion Rule: "Controlled breathing", slow reveals, tiny travel distances.
+            
+            // 1. Hero Setup - Framer blur-spring reveal
+            const heroText = new SplitType('.gs-split-hero', { types: 'chars' });
+            gsap.set(heroText.chars, { y: '100%', opacity: 0, filter: 'blur(12px)', scale: 0.9 });
+            gsap.to(heroText.chars, {
+                y: '0%', 
+                opacity: 1, 
+                filter: 'blur(0px)',
+                scale: 1,
+                duration: 1.8, 
+                stagger: 0.05, 
+                ease: "back.out(1.5)",
+                delay: 0.1
+            });
+
+            // 2. Framer-Style Typography 
+            const splitTextElements = document.querySelectorAll('.gs-split');
+            splitTextElements.forEach((el) => {
+                const text = new SplitType(el, { types: 'lines, words, chars' });
+                gsap.set(text.chars, { y: '100%', opacity: 0, filter: 'blur(10px)', scale: 0.95 });
+
+                gsap.to(text.chars, {
+                    scrollTrigger: {
+                        trigger: el,
+                        start: "top 85%",
+                    },
+                    y: '0%', 
+                    opacity: 1, 
+                    filter: 'blur(0px)',
+                    scale: 1,
+                    duration: 1.4, 
+                    stagger: 0.02, 
+                    ease: "back.out(1.2)"
+                });
+            });
+
+            // 3. SaaS-Style Soft Fade Ups (Framer Scale/Blur)
+            gsap.utils.toArray('.gs-fade').forEach(el => {
+                gsap.fromTo(el, { y: 20, opacity: 0, scale: 0.95, filter: 'blur(8px)' }, {
+                    scrollTrigger: { trigger: el, start: "top 90%" },
+                    y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.5, ease: "back.out(1.2)"
+                });
+            });
+
+            gsap.utils.toArray('.gs-fade-up').forEach(el => {
+                gsap.fromTo(el, { y: 40, opacity: 0, scale: 0.9, filter: 'blur(15px)' }, {
+                    scrollTrigger: { trigger: el, start: "top 85%" },
+                    y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 1.6, ease: "back.out(1.5)"
+                });
+            });
+
+            // 4. Framer-style Image Masks
+            gsap.utils.toArray('.img-reveal').forEach(el => {
+                gsap.fromTo(el, { clipPath: "inset(10% 10% 10% 10%)", scale: 0.9, filter: "blur(15px)" }, {
+                    scrollTrigger: { trigger: el, start: "top 85%" },
+                    clipPath: "inset(0% 0 0 0)", 
+                    scale: 1,
+                    filter: "blur(0px)",
+                    duration: 1.8, 
+                    ease: "expo.out"
+                });
+            });
+
+            // 5. Calm Parallax (Extremely subtle, serving only perceived depth)
+            gsap.utils.toArray('.parallax-media').forEach(media => {
+                gsap.to(media, {
+                    scrollTrigger: {
+                        trigger: media.parentElement,
+                        start: "top bottom", end: "bottom top", scrub: true
+                    },
+                    yPercent: 8, // Very subtle
+                    ease: "none"
+                });
+            });
+
+            gsap.to("#side-scroll-text", {
+                scrollTrigger: { 
+                    trigger: "#side-scroll-text", 
+                    start: "top bottom", end: "bottom top", scrub: true 
+                },
+                yPercent: -20, 
+                ease: "none"
+            });
+
+            // 6. SaaS Grade Magnetic Buttons
+            const magneticWraps = document.querySelectorAll('.magnetic-wrap');
+            magneticWraps.forEach(wrap => {
+                const btn = wrap.querySelector('.btn-magnetic');
+                
+                wrap.addEventListener('mousemove', (e) => {
+                    const rect = wrap.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width / 2;
+                    const y = e.clientY - rect.top - rect.height / 2;
+                    
+                    gsap.to(btn, {
+                        x: x * 0.25, // Soft, controlled tracking
+                        y: y * 0.25,
+                        duration: 0.5,
+                        ease: "power2.out"
+                    });
+                });
+                
+                wrap.addEventListener('mouseleave', () => {
+                    gsap.to(btn, {
+                        x: 0, y: 0, duration: 0.8,
+                        ease: "elastic.out(1, 0.4)"
+                    });
+                });
+            });
+
+            // ── Gothic Navbar: scroll state ──
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }, { passive: true });
+
+            // ── Gothic Navbar: entrance animation ──
+            gsap.fromTo('#navbar',
+                { y: -80, opacity: 0 },
+                { y: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.3 }
+            );
+
+            // ── Mobile menu toggle ──
+            const mobileBtn  = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            if (mobileBtn && mobileMenu) {
+                mobileBtn.addEventListener('click', () => {
+                    const isHidden = mobileMenu.classList.contains('hidden');
+                    if (isHidden) {
+                        mobileMenu.classList.remove('hidden');
+                        gsap.fromTo(mobileMenu,
+                            { y: -10, opacity: 0 },
+                            { y: 0, opacity: 1, duration: 0.35, ease: 'power2.out' }
+                        );
+                    } else {
+                        gsap.to(mobileMenu, {
+                            y: -10, opacity: 0, duration: 0.25, ease: 'power2.in',
+                            onComplete: () => mobileMenu.classList.add('hidden')
+                        });
+                    }
+                });
+                // Close on any link click
+                mobileMenu.querySelectorAll('a').forEach(a => {
+                    a.addEventListener('click', () => {
+                        gsap.to(mobileMenu, {
+                            y: -10, opacity: 0, duration: 0.2, ease: 'power2.in',
+                            onComplete: () => mobileMenu.classList.add('hidden')
+                        });
+                    });
+                });
+            }
+
+            // --- 7. Flavor Portal Logic (Mini-Page Overlay) ---
+            const btnClaim = document.getElementById('btn-claim');
+            const flavorPortal = document.getElementById('flavor-portal');
+            const closePortal = document.getElementById('close-portal');
+            const portalMedia = document.querySelector('.portal-media');
+            const portalVideo = document.getElementById('portal-video');
+            const portalText = new SplitType('.portal-text .gs-portal-split', { types: 'lines, words, chars' });
+            const portalFades = flavorPortal.querySelectorAll('.gs-portal-fade');
+
+            // Setting initial states
+            gsap.set(portalMedia, { scale: 0.9, opacity: 0, filter: 'blur(10px)' });
+            gsap.set(portalText.chars, { y: '100%', opacity: 0, filter: 'blur(8px)', scale: 0.9 });
+            gsap.set(portalFades, { y: 20, opacity: 0, scale: 0.95 });
+
+            btnClaim.addEventListener('click', () => {
+                // Remove hidden, enable pointer events
+                flavorPortal.classList.remove('hidden');
+                flavorPortal.classList.add('block');
+                flavorPortal.style.pointerEvents = 'auto';
+                document.body.style.overflow = 'hidden'; // Lock scroll
+
+                portalVideo.currentTime = 0;
+                portalVideo.play();
+
+                const tl = gsap.timeline();
+                
+                // Overlay background fade in
+                tl.to(flavorPortal, { opacity: 1, duration: 0.5, ease: "power2.inOut" })
+                  
+                  // Media scale up (Framer style)
+                  .to(portalMedia, {
+                      scale: 1, opacity: 1, filter: 'blur(0px)', duration: 1.2, ease: "back.out(1.2)"
+                  }, "-=0.2")
+
+                  // Text staggered drop
+                  .to(portalText.chars, {
+                      y: '0%', opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1.0, stagger: 0.02, ease: "back.out(1.2)"
+                  }, "-=1.0")
+
+                  // Fade ins
+                  .to(portalFades, {
+                      y: 0, opacity: 1, scale: 1, duration: 1.0, ease: "back.out(1.2)", stagger: 0.1
+                  }, "-=0.8");
+            });
+
+            closePortal.addEventListener('click', () => {
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        flavorPortal.classList.add('hidden');
+                        flavorPortal.classList.remove('block');
+                        flavorPortal.style.pointerEvents = 'none';
+                        document.body.style.overflow = ''; // Unlock scroll
+                        
+                        // Reset states for next open
+                        gsap.set(portalMedia, { scale: 0.9, opacity: 0, filter: 'blur(10px)' });
+                        gsap.set(portalText.chars, { y: '100%', opacity: 0, filter: 'blur(8px)', scale: 0.9 });
+                        gsap.set(portalFades, { y: 20, opacity: 0, scale: 0.95 });
+                    }
+                });
+
+                // Shrink and fade out
+                tl.to(portalMedia, { scale: 0.9, opacity: 0, filter: 'blur(10px)', duration: 0.5, ease: "power2.in" })
+                  .to(portalText.chars, { y: '100%', opacity: 0, duration: 0.3, stagger: 0.01, ease: "power2.in" }, "-=0.4")
+                  .to(portalFades, { opacity: 0, duration: 0.3 }, "-=0.3")
+                  .to(flavorPortal, { opacity: 0, duration: 0.4, ease: "power2.inOut" }, "-=0.2");
+            });
+        });
+
+        // ══════════════════════════════════════════════════════
+        // JITTER & FRAMER-STYLE ANIMATION SYSTEM
+        // ══════════════════════════════════════════════════════
+        (() => {
+
+            // ── 1. 3D PERSPECTIVE TILT on all media cards ──
+            document.querySelectorAll('.img-reveal, .gothic-card').forEach(card => {
+                card.classList.add('tilt-card');
+                // Inject shine layer
+                if (!card.querySelector('.tilt-shine')) {
+                    const shine = document.createElement('div');
+                    shine.className = 'tilt-shine';
+                    card.style.position = 'relative';
+                    card.appendChild(shine);
+                }
+
+                card.addEventListener('mousemove', (e) => {
+                    const rect   = card.getBoundingClientRect();
+                    const cx     = rect.left + rect.width  / 2;
+                    const cy     = rect.top  + rect.height / 2;
+                    const dx     = (e.clientX - cx) / (rect.width  / 2); // -1 → +1
+                    const dy     = (e.clientY - cy) / (rect.height / 2); // -1 → +1
+                    const rotY   =  dx * 10;  // max 10deg
+                    const rotX   = -dy * 7;   // max 7deg
+
+                    gsap.to(card, {
+                        rotationY: rotY,
+                        rotationX: rotX,
+                        transformPerspective: 900,
+                        ease: 'power2.out',
+                        duration: 0.4
+                    });
+
+                    // Move shine radial to cursor
+                    const shine = card.querySelector('.tilt-shine');
+                    if (shine) {
+                        const px = ((e.clientX - rect.left) / rect.width)  * 100;
+                        const py = ((e.clientY - rect.top)  / rect.height) * 100;
+                        shine.style.background = `radial-gradient(circle at ${px}% ${py}%, rgba(255,255,255,0.07) 0%, transparent 60%)`;
+                    }
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+                        rotationY: 0, rotationX: 0,
+                        ease: 'elastic.out(1, 0.4)',
+                        duration: 1.0
+                    });
+                });
+            });
+
+            // ── 2. TEXT SCRAMBLE on h2 headings ──
+            const CHARS = '█▓▒░#@$%&!?ABCDEFXYZabcxyz0123456789';
+            function scramble(el) {
+                const original = el.dataset.original || el.innerText;
+                el.dataset.original = original;
+                let frame = 0;
+                const totalFrames = 18;
+                const interval = setInterval(() => {
+                    el.innerText = original.split('').map((ch, i) => {
+                        if (ch === ' ' || ch === '\n') return ch;
+                        if (frame / totalFrames > i / original.length) return ch;
+                        return CHARS[Math.floor(Math.random() * CHARS.length)];
+                    }).join('');
+                    frame++;
+                    if (frame > totalFrames) {
+                        el.innerText = original;
+                        clearInterval(interval);
+                    }
+                }, 40);
+            }
+
+            document.querySelectorAll('h2.gs-split, h1.gs-split-hero').forEach(el => {
+                el.classList.add('jitter-hover');
+                el.addEventListener('mouseenter', () => scramble(el));
+            });
+
+            // ── 3. SPARK / EMBER BURST on mouse click ──
+            function spawnSpark(x, y) {
+                const count = 8 + Math.floor(Math.random() * 6);
+                for (let i = 0; i < count; i++) {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark';
+                    document.body.appendChild(spark);
+
+                    const angle  = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+                    const dist   = 30 + Math.random() * 60;
+                    const dx     = Math.cos(angle) * dist;
+                    const dy     = Math.sin(angle) * dist;
+                    const size   = 3 + Math.random() * 5;
+                    const hue    = Math.random() > 0.5 ? '#8B0000' : '#CC1111';
+
+                    gsap.set(spark, {
+                        x: x, y: y,
+                        width: size, height: size,
+                        backgroundColor: hue,
+                        boxShadow: `0 0 ${size * 2}px ${hue}`
+                    });
+
+                    gsap.to(spark, {
+                        x: x + dx,
+                        y: y + dy + 20,
+                        opacity: 0,
+                        scale: 0.2,
+                        duration: 0.6 + Math.random() * 0.4,
+                        ease: 'power2.out',
+                        onComplete: () => spark.remove()
+                    });
+                }
+            }
+
+            document.addEventListener('mousedown', (e) => {
+                spawnSpark(e.clientX, e.clientY);
+            });
+
+            // ── 4. FRAMER-STYLE SPRING STAGGER on section entry ──
+            // Gallery images re-entrance with overshoot spring
+            gsap.utils.toArray('.img-reveal, .gothic-card').forEach((el, i) => {
+                gsap.fromTo(el,
+                    { y: 50, opacity: 0, scale: 0.93, filter: 'blur(12px)' },
+                    {
+                        scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+                        y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
+                        duration: 1.4,
+                        delay: i * 0.08,
+                        ease: 'back.out(1.8)'
+                    }
+                );
+            });
+
+            // ── 5. BREATHING GLOW on both CTAs ──
+            document.querySelectorAll('#btn-claim, a[href="#syndicate"]').forEach(btn => {
+                btn.classList.add('breathe-cta');
+            });
+
+            // ── 6. GSAP TICKER — continuous subtle skull bob ──
+            const skull = document.getElementById('skull-cursor');
+            if (skull) {
+                gsap.to(skull, {
+                    rotation: 6,
+                    duration: 1.2,
+                    ease: 'sine.inOut',
+                    yoyo: true,
+                    repeat: -1,
+                    transformOrigin: '50% 50%'
+                });
+            }
+
+        })();
+
+        // ══════════════════════════════════════════════════════
+        // NETLIFY AJAX FORM HANDLER
+        // ══════════════════════════════════════════════════════
+        (() => {
+            const form       = document.getElementById('nox-waitlist-form');
+            const btnText    = document.getElementById('btn-text');
+            const btnLoading = document.getElementById('btn-loading');
+            const submitBtn  = document.getElementById('form-submit-btn');
+            const successBox = document.getElementById('form-success');
+
+            if (!form) return;
+
+            // GSAP focus glow on inputs
+            document.querySelectorAll('.nox-input').forEach(input => {
+                input.addEventListener('focus', () => {
+                    gsap.to(input, { boxShadow: '0 0 0 3px rgba(139,0,0,0.2), 0 0 25px rgba(139,0,0,0.12)', duration: 0.3, ease: 'power2.out' });
+                });
+                input.addEventListener('blur', () => {
+                    gsap.to(input, { boxShadow: 'none', duration: 0.4, ease: 'power2.inOut' });
+                });
+            });
+
+            // AJAX submit to Netlify
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Swap to loading state
+                btnText.classList.add('hidden');
+                btnLoading.classList.remove('hidden');
+                submitBtn.disabled = true;
+                gsap.to(submitBtn, { opacity: 0.7, scale: 0.98, duration: 0.2 });
+
+                // Encode form data
+                const data = new FormData(form);
+                const body = new URLSearchParams(data).toString();
+
+                try {
+                    const res = await fetch('/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body
+                    });
+
+                    if (res.ok) {
+                        // Animate form out
+                        gsap.to(form, {
+                            y: -10, opacity: 0, scale: 0.97, filter: 'blur(4px)',
+                            duration: 0.5, ease: 'power2.in',
+                            onComplete: () => {
+                                form.classList.add('hidden');
+                                successBox.classList.remove('hidden');
+                                gsap.fromTo(successBox,
+                                    { y: 20, opacity: 0, scale: 0.95, filter: 'blur(8px)' },
+                                    { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.9, ease: 'back.out(1.5)' }
+                                );
+                            }
+                        });
+                    } else {
+                        throw new Error('Submission failed');
+                    }
+                } catch (err) {
+                    // Restore button on error
+                    btnText.classList.remove('hidden');
+                    btnLoading.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    gsap.to(submitBtn, { opacity: 1, scale: 1, duration: 0.3 });
+                    // Jitter shake the form on error
+                    gsap.to(form, { x: -6, duration: 0.06, yoyo: true, repeat: 5, ease: 'power4.inOut',
+                        onComplete: () => gsap.set(form, { x: 0 }) });
+                    console.error('Form error:', err);
+                }
+            });
+        })();
+
+    </script>
+</body>
+</html>

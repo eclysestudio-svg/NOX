@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "NOX Brand Landing Page",
   "scripts": {
-    "start": "live-server ."
+    "start": "live-server .",
+    "build": "echo \"Build step complete\""
   },
   "author": "",
   "license": "ISC",

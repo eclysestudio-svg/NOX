@@ -752,23 +752,11 @@
                 Be first when NOX hits shelves. No noise. No weekly newsletters. Just one signal when the batch drops.
             </p>
 
-            <!-- Netlify Form -->
-            <!-- Netlify detects this form at build time via data-netlify="true" -->
+            <!-- Waitlist Form -->
             <form
                 id="nox-waitlist-form"
-                name="nox-waitlist"
-                method="POST"
-                data-netlify="true"
-                netlify-honeypot="bot-field"
                 class="w-full flex flex-col gap-4"
             >
-                <!-- Required hidden field for JS/AJAX submission -->
-                <input type="hidden" name="form-name" value="nox-waitlist">
-
-                <!-- Honeypot spam trap (hidden from real users) -->
-                <div class="hidden" aria-hidden="true">
-                    <label>Don’t fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label>
-                </div>
 
                 <!-- Name + Email row -->
                 <div class="flex flex-col sm:flex-row gap-4">
@@ -1390,7 +1378,7 @@
                 });
             });
 
-            // AJAX submit to Netlify
+            // AJAX form submission
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
